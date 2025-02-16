@@ -1,0 +1,111 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #222;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.header {
+  width: 100%;
+  max-width: 1400px;
+  padding: 20px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .header {
+    padding: 10px;
+  }
+}
+
+.messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 50px;
+}
+.messages li {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+.messages li span {
+  padding: 10px;
+}
+.messages li:last-child {
+  border-bottom: none;
+}
+.messages li:nth-child(odd) {
+  background-color: #252525;
+}
+
+.form {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+.form .name {
+  margin-right: 10px;
+}
+.form .input {
+  padding: 10px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  border-radius: 5px;
+  flex-grow: 1;
+  margin-right: 10px;
+  box-sizing: border-box;
+  min-width: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.form .input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+.form .btn {
+  padding: 10px 20px;
+  border: none;
+  background-color: #444;
+  color: #eee;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.form .btn:hover {
+  background-color: #555;
+}
+.form .btn:focus {
+  outline: none;
+}
+@media (max-width: 768px) {
+  .form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .form .name {
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+  .form .input {
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+}/*# sourceMappingURL=main.min.css.map */

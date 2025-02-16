@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+// Общие стили и переменные
+$max-width: 1400px;
+$dark-bg: #222;
+$dark-text: #eee;
+$dark-input-bg: #333;
+$dark-input-text: #fff;
+$dark-button-bg: #444;
+$dark-button-hover-bg: #555;
+$mobile-breakpoint: 768px; // Примерный breakpoint для мобильных устройств
+$font-family: "Roboto", sans-serif; // Добавлена переменная для шрифта
+
+body {
+  font-family: $font-family; // Используем Roboto
+  margin: 0;
+  padding: 0;
+  background-color: $dark-bg;
+  color: $dark-text;
+  display: flex; // Для центрирования содержимого
+  justify-content: center; // Центрирование по горизонтали
+  align-items: flex-start; // Выравнивание по верху (header всегда сверху)
+  min-height: 100vh; // Чтобы фон занимал весь экран
+}
+
+.header {
+  width: 100%;
+  max-width: $max-width; // Ограничение ширины
+  padding: 20px;
+  box-sizing: border-box; // Чтобы padding не увеличивал ширину
+  margin: 0 auto; // Центрирование контента
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 10px; // Меньше padding на мобильных
+  }
+}
+
+.messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    span {
+      padding: 10px;
+    }
+    padding: 10px;
+    border-bottom: 1px solid #444;
+
+    &:last-child {
+      border-bottom: none;
+    }
+    &:nth-child(odd) {
+      background-color: #252525;
+    }
+  }
+  margin-bottom: 50px;
+}
+
+.form {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+
+  .name {
+    margin-right: 10px;
+  }
+
+  .input {
+    padding: 10px;
+    border: none;
+    background-color: $dark-input-bg;
+    color: $dark-input-text;
+    border-radius: 5px;
+    flex-grow: 1; // Занимает доступное пространство
+    margin-right: 10px;
+    box-sizing: border-box; // Учитывать padding и border в ширине
+    min-width: 0; // Чтобы input с flex-grow не переполнял контейнер
+    // Сброс стилей по умолчанию для iOS (опционально)
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    &:focus {
+      outline: none; // Убрать дефолтную обводку при фокусе
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); // Добавить легкую тень
+    }
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: $dark-button-bg;
+    color: $dark-text;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $dark-button-hover-bg;
+    }
+
+    &:focus {
+      outline: none; // Убрать дефолтную обводку при фокусе
+    }
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    flex-direction: column; // Stack элементы формы вертикально на мобильных
+    align-items: stretch; // Растянуть элементы на всю ширину контейнера
+    .name {
+      margin-bottom: 10px;
+      margin-right: 0;
+    }
+
+    .input {
+      margin-bottom: 10px;
+      margin-right: 0;
+    }
+  }
+}
