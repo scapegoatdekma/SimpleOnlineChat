@@ -9,11 +9,23 @@ const io = require("socket.io")(http);
 
 const port = process.env.PORT || 4200;
 
-// Настраиваем CORS для продакшена (замените на свой домен)
+// Динамическая настройка CORS
+const whitelist = [
+  "http://localhost:4200",
+  "https://simpleonlinechat.onrender.com",
+]; // Добавьте свои домены
 const corsOptions = {
-  origin: "https://simpleonlinechat.onrender.com", // Замените на URL вашего сайта Render
-  methods: ["GET", "POST"],
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      // Разрешить запросы без origin (например, curl)
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST"], // Укажите разрешенные методы
 };
+
 app.use(cors(corsOptions));
 
 // Middleware
@@ -28,14 +40,14 @@ app.get("/", (req, res) => {
 
 // Socket.IO
 io.on("connection", (socket) => {
-  console.log("A user connected"); // Логируем подключение
+  console.log("A user connected");
 
   socket.on("chat message", (data) => {
     io.emit("chat message", { message: data.message, name: data.name });
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected"); // Логируем отключение
+    console.log("user disconnected");
   });
 });
 
