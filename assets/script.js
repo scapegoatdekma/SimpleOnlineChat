@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io("https://simpleonlinechat.onrender.com");
 const messages = document.querySelector(".messages");
 const form = document.querySelector(".form");
 const input = document.querySelector(".input");
