@@ -127,7 +127,7 @@ function prepareMedia() {
         closeModal();
       };
       reader.onerror = function (error) {
-        console.error("FileReader error:", error);
+        // console.error("FileReader error:", error);
       };
       reader.readAsDataURL(mediaFile);
       return;
@@ -147,7 +147,7 @@ function prepareMedia() {
         closeModal();
       };
       reader.onerror = function (error) {
-        console.error("FileReader error:", error);
+        // console.error("FileReader error:", error);
       };
       reader.readAsDataURL(mediaFile);
       return;
@@ -157,15 +157,15 @@ function prepareMedia() {
     }
   } else if (mediaType === "video-upload") {
     const mediaFile = document.getElementById("mediaFile").files[0];
-    console.log("video-upload start");
-    console.log(mediaFile);
+    // console.log("video-upload start");
+    // console.log(mediaFile);
     if (mediaFile) {
-      console.log("video-upload mediaFile is TRUE");
+      // console.log("video-upload mediaFile is TRUE");
       const reader = new FileReader();
       reader.onload = function (e) {
         const videoUrl = e.target.result;
-        console.log("video-upload e", e);
-        console.log("video-upload videoUrl", videoUrl);
+        // console.log("video-upload e", e);
+        // console.log("video-upload videoUrl", videoUrl);
         mediaHTML = `<div class="video-container">
                          <video controls>
                            <source src="${videoUrl}" type="${mediaFile.type}">
@@ -176,11 +176,11 @@ function prepareMedia() {
         closeModal();
       };
       reader.onerror = function (error) {
-        console.error("FileReader error:", error);
+        // console.error("FileReader error:", error);
       };
-      console.log("video-upload before reader.readAsDataURL");
+      // console.log("video-upload before reader.readAsDataURL");
       reader.readAsDataURL(mediaFile);
-      console.log("video-upload after reader.readAsDataURL");
+      // console.log("video-upload after reader.readAsDataURL");
       return;
     } else {
       alert("Пожалуйста, выберите видеофайл");
