@@ -17,6 +17,7 @@ $mobile-breakpoint: 768px; // Примерный breakpoint для мобиль�
 $font-family: "Roboto", sans-serif; // Добавлена переменная для шрифта
 
 body {
+  position: relative;
   font-family: $font-family; // Используем Roboto
   margin: 0;
   padding: 0;
@@ -35,12 +36,24 @@ body {
   box-sizing: border-box; // Чтобы padding не увеличивал ширину
   margin: 0 auto; // Центрирование контента
 
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   @media (max-width: $mobile-breakpoint) {
     padding: 10px; // Меньше padding на мобильных
+  }
+
+  .name {
+    align-self: flex-start;
+    padding: 10px 25px;
+    background-color: $dark-input-bg;
+    display: inline-block;
+    border-radius: 25px;
   }
 }
 
 .messages {
+  padding-top: 120px;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -52,6 +65,11 @@ body {
     padding: 10px;
     border-bottom: 1px solid #444;
 
+    img,
+    iframe,
+    .video-container {
+      margin-top: 10px;
+    }
     &:last-child {
       border-bottom: none;
     }
@@ -70,9 +88,15 @@ body {
   display: flex;
   align-items: center;
   margin-top: 20px;
+  padding: 0 20px;
 
-  .name {
-    margin-right: 10px;
+  .box {
+    .content {
+      display: flex;
+      width: 100%;
+    }
+    display: flex;
+    width: 100%;
   }
 
   .input {
@@ -114,16 +138,162 @@ body {
   }
 
   @media (max-width: $mobile-breakpoint) {
-    flex-direction: column; // Stack элементы формы вертикально на мобильных
+    // flex-direction: column; // Stack элементы формы вертикально на мобильных
     align-items: stretch; // Растянуть элементы на всю ширину контейнера
+    .box {
+      flex-direction: column;
+      align-content: stretch;
+    }
+
     .name {
       margin-bottom: 10px;
       margin-right: 0;
     }
-
+    .content {
+      gap: 5px;
+    }
+    .media-button,
     .input {
       margin-bottom: 10px;
       margin-right: 0;
     }
   }
+}
+
+/* Modal styles (same as before) */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+
+  .modal-content {
+    width: 100%;
+    max-width: 600px;
+    background-color: $dark-input-bg;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    // text-align: center;
+
+    h2 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+    input,
+    select {
+      width: 100%;
+      height: 35px;
+      padding: 10px 20px;
+      border-radius: 10px 25px 25px 10px;
+    }
+    select {
+      border-radius: 5px;
+      height: 40px;
+    }
+    #fileInputContainer {
+      width: 100%;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      button {
+        height: 35px;
+      }
+    }
+  }
+}
+
+#preparedMediaIndicator {
+  display: flex;
+
+  gap: 5px;
+  display: inline-block;
+  position: absolute;
+  left: 0px;
+  top: -40px;
+  span {
+    padding: 4px 10px;
+    border-radius: 5px;
+
+    background-color: $dark-input-bg;
+  }
+}
+
+/* Media button style (same as before) */
+.media-button {
+  position: relative;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 10px;
+  background-color: $dark-input-bg;
+  border-radius: 5px;
+  margin-right: 10px;
+  color: #333;
+}
+/* Make images responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make videos responsive */
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio (adjust if needed) */
+  height: 0;
+}
+
+.video-container iframe,
+.video-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Make audio responsive */
+audio {
+  width: 100%;
+  max-width: 400px; /* Adjust as needed */
+  margin: 10px 0;
+  border-radius: 5px;
+  overflow: hidden;
+  // background-color: #333;
+}
+
+audio::-webkit-media-controls-panel {
+  background-color: #333;
+  color: #fff;
+}
+
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-pause-button {
+  color: #fff;
+}
+
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  color: #fff;
+}
+
+audio::-webkit-media-controls-timeline-button {
+  background-color: #fff;
+}
+
+audio::-webkit-media-controls-volume-slider-thumb {
+  background-color: #fff;
 }

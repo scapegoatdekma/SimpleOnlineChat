@@ -8,13 +8,83 @@
   </head>
   <body>
     <div class="header">
+      <div class="name">dekmaOFF</div>
       <ul class="messages"></ul>
-      <form action="" class="form">
-        <div class="name">dekmaOFF</div>
-        <input type="text" class="input" autocomplete="off" />
-        <button class="btn">Отправить</button>
-      </form>
     </div>
+
+    <form action="" class="form">
+      <div class="box">
+        <div class="content">
+          <!-- Media button -->
+          <span class="media-button" onclick="openModal()"
+            >📷
+            <!-- Prepared media indicator -->
+            <div id="preparedMediaIndicator" style="">
+              <span id="preparedMediaIcon"></span>
+              <span
+                id="removePreparedMedia"
+                onclick="removePreparedMedia()"
+                style="cursor: pointer"
+                >❌</span
+              >
+            </div>
+          </span>
+          <input
+            type="text"
+            class="input"
+            autocomplete="off"
+            id="messageInput"
+          />
+        </div>
+        <button class="btn">Отправить</button>
+      </div>
+    </form>
+    <!-- Modal (updated) -->
+    <div id="mediaModal" class="modal">
+      <div class="modal-content">
+        <h2 class="media_title">Вставить медиа</h2>
+
+        <label for="mediaUrl">URL:</label>
+        <input
+          type="text"
+          id="mediaUrl"
+          placeholder="URL картинки или видео"
+          style="display: none"
+        /><br /><br />
+
+        <label for="mediaWidth" style="display: none">Ширина (px):</label>
+        <input
+          type="number"
+          id="mediaWidth"
+          value="200"
+          style="display: none"
+        /><br /><br />
+
+        <label for="mediaType">Тип медиа:</label>
+        <select id="mediaType" onchange="toggleFileInput()">
+          <option value="image">Картинка (URL)</option>
+          <option value="image-upload">Картинка из галереи</option>
+          <option value="video">Видео (URL)</option>
+          <option value="video-upload">Видео из галереи</option>
+          <!-- <option value="audio">Аудио (URL)</option> -->
+          <option value="audio-upload">Аудио из галереи</option></select
+        ><br /><br />
+
+        <div id="fileInputContainer" style="display: none">
+          <label for="mediaFile">Выбрать файл:</label>
+          <input
+            type="file"
+            id="mediaFile"
+            accept="image/*, audio/*, video/*"
+          /><br /><br />
+        </div>
+        <div class="buttons">
+          <button onclick="prepareMedia()">Подготовить</button>
+          <button onclick="closeModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="/assets/script.js"></script>
   </body>

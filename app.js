@@ -5,7 +5,6 @@ const path = require("path");
 
 const app = express();
 const http = require("http").createServer(app);
-const io = require("socket.io")(http);
 
 const port = process.env.PORT || 4200;
 
@@ -13,27 +12,47 @@ const port = process.env.PORT || 4200;
 const whitelist = [
   "http://localhost:4200",
   "https://simpleonlinechat.onrender.com",
-]; // Добавьте свои домены
+];
+
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log("CORS Origin (Function):", origin); // Add this line
     if (whitelist.indexOf(origin) !== -1 || !origin) {
-      // Разрешить запросы без origin (например, curl)
+      console.log("CORS Allowed (Function):", origin); // Add this line
       callback(null, true);
     } else {
+      console.log("CORS Blocked (Function):", origin); // Add this line
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST"], // Укажите разрешенные методы
+  methods: ["GET", "POST"],
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); // Express CORS
+console.log("CORS Middleware applied for Express"); // Add this line
 
-// Middleware
+const io = require("socket.io")(http, {
+  cors: {
+    origin: function (origin, callback) {
+      console.log("Socket.IO Origin (Function):", origin); // Add this line
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        console.log("Socket.IO Allowed (Function):", origin); // Add this line
+        callback(null, true);
+      } else {
+        console.log("Socket.IO Blocked (Function):", origin); // Add this line
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+  },
+  maxHttpBufferSize: 1e8,
+});
+console.log("Socket.IO configured with CORS"); // Add this line
+
 app.use(express.json());
 app.use(bodyParser.json());
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
-// Обслуживаем index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
