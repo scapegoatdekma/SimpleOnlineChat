@@ -9,8 +9,8 @@ const preparedMediaIndicator = document.getElementById(
 );
 const preparedMediaIcon = document.getElementById("preparedMediaIcon");
 
-// const username = prompt("Ваше имя:");
-const username = "daun";
+const username = prompt("Ваше имя:");
+// const username = "daun";
 nameBlock.innerHTML = `${username}`;
 
 // Функция для экранирования HTML (важно для безопасности!)
@@ -227,4 +227,3 @@ window.onclick = function (event) {
 
 // Call toggleFileInput to initialize the visibility of the input fields
 toggleFileInput();
-openModal();
