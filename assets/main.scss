@@ -42,6 +42,17 @@ body {
   @media (max-width: $mobile-breakpoint) {
     padding: 10px; // Меньше padding на мобильных
   }
+  button {
+    position: absolute;
+    top: 30px;
+    padding: 10px 25px;
+    border-radius: 25px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: $dark-button-bg;
+    color: $dark-input-text;
+    outline: none;
+  }
 
   .name {
     align-self: flex-start;

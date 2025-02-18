@@ -34,6 +34,17 @@ body {
     padding: 10px;
   }
 }
+.header button {
+  position: absolute;
+  top: 30px;
+  padding: 10px 25px;
+  border-radius: 25px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #444;
+  color: #fff;
+  outline: none;
+}
 .header .name {
   align-self: flex-start;
   padding: 10px 25px;

@@ -10,7 +10,6 @@ const preparedMediaIndicator = document.getElementById(
 const preparedMediaIcon = document.getElementById("preparedMediaIcon");
 
 const username = prompt("Ваше имя:");
-// const username = "daun";
 nameBlock.innerHTML = `${username}`;
 
 // Функция для экранирования HTML (важно для безопасности!)
@@ -31,27 +30,50 @@ function sanitizeHTML(text) {
 // Глобальные переменные для хранения медиа
 let preparedMediaHTML = "";
 
+// Массив для хранения всех сообщений
+let allMessages = [];
+
 // Обработчик отправки сообщений (изменен для поддержки медиа)
 form.addEventListener("submit", function (event) {
-  event.preventDefault(); // Предотвращаем перезагрузку страницы
+  event.preventDefault();
+  let messageText = input.value.trim(); // Обрезаем пробелы
+  if (messageText !== "") {
+    // Проверяем, что сообщение не пустое
+    let fullMessage = messageText; // Изначально присваиваем только текст сообщения
+    if (preparedMediaHTML) {
+      // Добавляем медиа, только если оно есть
+      fullMessage += "<br>" + preparedMediaHTML;
+    }
 
-  let messageText = input.value;
+    const newMessage = {
+      name: username,
+      message: fullMessage,
+    };
 
-  // Добавляем подготовленное медиа к сообщению
-  const fullMessage = messageText + "<br>" + preparedMediaHTML;
+    allMessages.push(newMessage);
+    addMessagesToPage(allMessages);
 
-  // Отправляем сообщение на сервер
-  socket.emit("chat message", { message: fullMessage, name: username });
-  input.value = ""; // Очищаем поле ввода
-  removePreparedMedia(); // Очищаем подготовленное медиа
+    socket.emit("chat message", {
+      message: fullMessage,
+      name: username,
+    });
+    input.value = "";
+    removePreparedMedia();
+  }
 });
 
 // Слушаем новые сообщения от сервера
 socket.on("chat message", function (data) {
-  const item = document.createElement("li");
-  item.innerHTML = `<span>${data.name}</span>: ${data.message}`;
-  messages.appendChild(item);
-  window.scrollTo(0, document.body.scrollHeight);
+  if (data.name !== username) {
+    // Проверяем, что сообщение не от нас
+    const isDuplicate = allMessages.some(
+      (existingMessage) => existingMessage.id === data.id
+    );
+    if (!isDuplicate) {
+      allMessages.push(data); // Добавляем сообщение в массив
+      addMessagesToPage(allMessages); // Перерисовываем список
+    }
+  }
 });
 
 // ***********************************************************
@@ -72,28 +94,17 @@ function toggleFileInput() {
   const mediaType = document.getElementById("mediaType").value;
   const urlInputContainer = document.getElementById("mediaUrl");
   const fileInputContainer = document.getElementById("fileInputContainer");
-  const widthLabel = document.querySelector('label[for="mediaWidth"]');
-  const widthInput = document.getElementById("mediaWidth");
 
-  if (mediaType === "image" || mediaType === "video") {
-    urlInputContainer.style.display = "block";
-    fileInputContainer.style.display = "none";
-    widthLabel.style.display = "block";
-    widthInput.style.display = "block";
-  } else if (
+  if (
     mediaType === "image-upload" ||
-    mediaType === "video-upload" ||
-    mediaType === "audio-upload"
+    mediaType === "audio-upload" ||
+    mediaType === "video-upload"
   ) {
     urlInputContainer.style.display = "none";
     fileInputContainer.style.display = "block";
-    widthLabel.style.display = "block";
-    widthInput.style.display = "block";
   } else {
     urlInputContainer.style.display = "block";
     fileInputContainer.style.display = "none";
-    widthLabel.style.display = "none";
-    widthInput.style.display = "none";
   }
 }
 
@@ -111,7 +122,25 @@ function prepareMedia() {
   } else if (mediaType === "video") {
     const mediaUrl = document.getElementById("mediaUrl").value;
 
-    mediaHTML = `<div class="video-container"><iframe src="${mediaUrl}" frameborder="0" allowfullscreen></iframe></div>`;
+    // Проверяем, является ли ссылка ссылкой на YouTube
+    if (mediaUrl.includes("youtube.com") || mediaUrl.includes("youtu.be")) {
+      // Получаем ID видео из ссылки YouTube
+      const videoId = getYoutubeVideoId(mediaUrl);
+      if (videoId) {
+        // Создаем код для встраивания видео с YouTube
+        mediaHTML = `<div class="video-container">
+                         <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                       </div>`;
+      } else {
+        alert("Не удалось получить ID видео YouTube из ссылки");
+        return;
+      }
+    } else {
+      // Если ссылка не на YouTube, используем ее как есть (предполагается, что это ссылка на другой видеофайл)
+      mediaHTML = `<div class="video-container">
+                         <iframe width="${widthContent}" src="${mediaUrl}" frameborder="0" allowfullscreen></iframe>
+                       </div>`;
+    }
   } else if (mediaType === "audio") {
     const mediaUrl = document.getElementById("mediaUrl").value;
     mediaHTML = `<audio controls src="${mediaUrl}"></audio>`;
@@ -127,7 +156,7 @@ function prepareMedia() {
         closeModal();
       };
       reader.onerror = function (error) {
-        // console.error("FileReader error:", error);
+        console.error("FileReader error:", error);
       };
       reader.readAsDataURL(mediaFile);
       return;
@@ -147,7 +176,7 @@ function prepareMedia() {
         closeModal();
       };
       reader.onerror = function (error) {
-        // console.error("FileReader error:", error);
+        console.error("FileReader error:", error);
       };
       reader.readAsDataURL(mediaFile);
       return;
@@ -157,15 +186,10 @@ function prepareMedia() {
     }
   } else if (mediaType === "video-upload") {
     const mediaFile = document.getElementById("mediaFile").files[0];
-    // console.log("video-upload start");
-    // console.log(mediaFile);
     if (mediaFile) {
-      // console.log("video-upload mediaFile is TRUE");
       const reader = new FileReader();
       reader.onload = function (e) {
         const videoUrl = e.target.result;
-        // console.log("video-upload e", e);
-        // console.log("video-upload videoUrl", videoUrl);
         mediaHTML = `<div class="video-container">
                          <video controls>
                            <source src="${videoUrl}" type="${mediaFile.type}">
@@ -176,11 +200,9 @@ function prepareMedia() {
         closeModal();
       };
       reader.onerror = function (error) {
-        // console.error("FileReader error:", error);
+        console.error("FileReader error:", error);
       };
-      // console.log("video-upload before reader.readAsDataURL");
       reader.readAsDataURL(mediaFile);
-      // console.log("video-upload after reader.readAsDataURL");
       return;
     } else {
       alert("Пожалуйста, выберите видеофайл");
@@ -193,9 +215,18 @@ function prepareMedia() {
   closeModal();
 }
 
+// Функция для получения ID видео из ссылки YouTube
+function getYoutubeVideoId(url) {
+  // Регулярное выражение для извлечения ID видео из ссылки YouTube
+  const regExp =
+    /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
+}
+
 // Функция для обновления индикатора подготовленного медиа
 function updatePreparedMediaIndicator(mediaType) {
-  preparedMediaIndicator.style.display = "flex";
+  preparedMediaIndicator.style.display = "inline-block";
   if (mediaType === "image") {
     preparedMediaIcon.textContent = "🖼️"; // Image icon
   } else if (mediaType === "image-upload") {
@@ -227,3 +258,84 @@ window.onclick = function (event) {
 
 // Call toggleFileInput to initialize the visibility of the input fields
 toggleFileInput();
+
+let messagesPerPage = 5;
+let loadMoreButton;
+let allMessagesLoaded = false;
+let lastMessageId = null; // ID самого верхнего сообщения
+
+function loadHistory() {
+  if (allMessagesLoaded) {
+    return;
+  }
+  socket.emit("get history", lastMessageId);
+}
+
+function createLoadMoreButton() {
+  const header = document.querySelector(".header");
+  loadMoreButton = document.createElement("button");
+  loadMoreButton.textContent = "Загрузить еще";
+  loadMoreButton.addEventListener("click", loadHistory);
+  header.appendChild(loadMoreButton); // Добавляем кнопку в header
+}
+
+// Функция для добавления массива сообщений на страницу
+function addMessagesToPage(messagesData) {
+  console.log("addMessagesToPage called with:", messagesData);
+  messages.innerHTML = ""; // Очищаем список сообщений
+  const fragment = document.createDocumentFragment();
+
+  messagesData.forEach((message) => {
+    const item = document.createElement("li");
+    item.innerHTML = `<span>${message.name}</span>: ${message.message}`;
+    fragment.appendChild(item);
+  });
+
+  messages.appendChild(fragment);
+}
+
+socket.on("history", function (data) {
+  console.log("history event received with data:", data);
+
+  if (data.length < messagesPerPage) {
+    allMessagesLoaded = true;
+  }
+
+  //Убираем дубликаты из новых сообщений
+  const newMessages = data.filter(
+    (newMessage) =>
+      !allMessages.some(
+        (existingMessage) => existingMessage.id === newMessage.id
+      )
+  );
+
+  // Объединяем массивы сообщений
+  allMessages = allMessages.concat(newMessages);
+
+  // Сортируем сообщения по id (в порядке возрастания)
+  allMessages.sort((a, b) => a.id - b.id);
+
+  addMessagesToPage(allMessages); // Перерисовываем список
+
+  // Устанавливаем lastMessageId
+  if (data.length > 0) {
+    // Находим ID самого старого сообщения (первого элемента в массиве)
+    lastMessageId = data[0].id; // ID самого старого сообщения
+  }
+
+  // Обновляем кнопку "Загрузить еще"
+  if (
+    data.length === messagesPerPage &&
+    !loadMoreButton &&
+    !allMessagesLoaded
+  ) {
+    createLoadMoreButton();
+  } else if (allMessagesLoaded && loadMoreButton) {
+    loadMoreButton.remove();
+    loadMoreButton = null;
+  }
+});
+
+// Загружаем первую порцию сообщений при загрузке страницы
+loadHistory();
+addMessagesToPage(allMessages); // Инициализируем список сообщений
